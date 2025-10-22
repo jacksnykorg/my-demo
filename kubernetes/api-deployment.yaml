@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: your-repo/api:latest # IaC Finding: Use of 'latest' tag
+        ports:
+        - containerPort: 3000
+        # IaC Finding: Missing resource limits

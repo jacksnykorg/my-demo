@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+  api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    environment:
+      - RISK_SERVICE_URL=http://risk-service:8000/calculate
+    depends_on:
+      - risk-service
+
+  risk-service:
+    build: ./risk-service
+    ports:
+      - "8000:8000"

@@ -1,0 +1,51 @@
+# Snyk Vulnerable Demo .gitignore
+
+# General
+# ----------------
+# Ignore environment variables - they contain secrets!
+.env*
+!.env.example
+
+# Ignore log files
+*.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+
+# Node.js (for frontend/ and api/)
+# ----------------
+# Ignore dependency directories
+node_modules/
+
+# Ignore build output folders
+dist/
+build/
+
+# Ignore crash logs and debug files
+npm-debug.log*
+yarn-error.log
+
+
+# Python (for risk-service/)
+# ----------------
+# Ignore the virtual environment directory
+venv/
+.venv/
+
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+# IDE & Editor specific
+# ----------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
