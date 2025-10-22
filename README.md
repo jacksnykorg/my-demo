@@ -1,7 +1,3 @@
-Of course. Here is a complete `README.md` file for the project. You can create a file named `README.md` in the root of the `snyk-vulnerable-demo/` directory and paste this content into it.
-
------
-
 # Snyk Vulnerable Demo Application: Task Prioritizer
 
 ⚠️ **Warning:** This application is intentionally insecure and is designed for demonstration purposes only. Do not deploy it to a production environment.
