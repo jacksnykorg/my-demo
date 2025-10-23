@@ -6,6 +6,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# --- NEW STEP ---
+# Download the spaCy NLP model so it's included in the container image.
+RUN python -m spacy download en_core_web_sm
+
 COPY . .
 
 # Exposing the port
