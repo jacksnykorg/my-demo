@@ -1,0 +1,150 @@
+name: Snyk Security Demo
+
+on:
+  push:
+    branches: [ myfeat-2 ]
+
+ 
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # ================================
+      # Dependency Scan (snyk test) 
+      # ================================
+      - name: Snyk vulnerability scan
+        uses: snyk/actions/node@master 
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: '--all-projects --ignore-policy --severity-threshold=high --sarif-file-output=frontend-deps.sarif'
+
+      - name: Upload frontend security report
+        uses: github/codeql-action/upload-sarif@v3
+        # FIXED: Added always()
+        if: always() && hashFiles('frontend-deps.sarif') != ''
+        with:
+          sarif_file: frontend-deps.sarif
+          category: frontend-deps
+
+      # ================================
+      # Python Setup and Dependency Scan
+      # ================================
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        working-directory: ./risk-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        continue-on-error: true
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Snyk Python vulnerability scan
+        working-directory: ./risk-service
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk test --file=requirements.txt --severity-threshold=high --sarif-file-output=../python-deps.sarif
+
+      - name: Upload Python security report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('python-deps.sarif') != ''
+        with:
+          sarif_file: python-deps.sarif
+          category: python-deps
+
+      # ================================
+      # Code Scan (snyk code test)
+      # ================================
+      - name: Snyk code quality scan
+        uses: snyk/actions/node@master
+        continue-on-error: true # Ensures upload step always runs
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test
+          args: '--sarif-file-output=code-scan.sarif --severity-threshold=low'
+
+      - name: Replace level note/warning/error for SAST findings
+        # Add an 'if' to only run if the file exists
+        if: hashFiles('code-scan.sarif') != ''
+        run: | 
+          jq '
+            walk(
+              if type == "object" and has("id") and has("defaultConfiguration") and .defaultConfiguration.level then
+                # Create or update properties bag with security-severity
+                if has("properties") then
+                  .properties += {"security-severity": (
+                    if .defaultConfiguration.level == "note" then "2"
+                    elif .defaultConfiguration.level == "warning" then "5" 
+                    elif .defaultConfiguration.level == "error" then "8"
+                    else "0"
+                    end
+                  )}
+                else
+                  . + {"properties": {"security-severity": (
+                    if .defaultConfiguration.level == "note" then "2"
+                    elif .defaultConfiguration.level == "warning" then "5" 
+                    elif .defaultConfiguration.level == "error" then "8"
+                    else "0"
+                    end
+                  )}}
+                end
+              else .
+              end
+            )
+          ' code-scan.sarif > code-scan_updated.sarif && mv code-scan_updated.sarif code-scan.sarif
+
+      - name: Upload code quality report
+        uses: github/codeql-action/upload-sarif@v3
+        # This condition is correct: always run, but only upload if file exists
+        if: always() && hashFiles('code-scan.sarif') != ''
+        with:
+          sarif_file: code-scan.sarif
+          category: code-scan
+
+      # ================================
+      # Infrastructure as Code Scan (snyk iac test)
+      # ================================
+      - name: Snyk IaC scan
+        uses: snyk/actions/node@master 
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          # FIXED: Added command: iac test
+          command: iac test
+          args: --severity-threshold=critical --sarif-file-output=iac-scan.sarif
+
+      - name: Upload IaC security report
+        uses: github/codeql-action/upload-sarif@v3
+        # FIXED: Added always()
+        if: always() && hashFiles('iac-scan.sarif') != ''
+        with:
+          sarif_file: iac-scan.sarif
+          category: iac-scan
