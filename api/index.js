@@ -35,26 +35,20 @@ app.post('/prioritize', async (req, res) => {
         res.status(500).json({ error: 'Failed to calculate risk score.' });
     }
 });
-// --- START: SQL INJECTION VULNERABILITY ---
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:'); // Use an in-memory database for the demo
 
-// Setup a dummy table and data
 db.serialize(() => {
     db.run("CREATE TABLE tasks (id INT, title TEXT, description TEXT)");
     db.run(`INSERT INTO tasks VALUES (1, 'Buy milk', 'Get the good kind')`);
     db.run(`INSERT INTO tasks VALUES (2, 'Call mom', 'Remember her birthday is soon')`);
 });
 
-// VULNERABLE ENDPOINT
-// This code uses string concatenation to build a SQL query, which allows for SQL Injection.
-// An attacker can provide a malicious ID like "2 OR 1=1" to bypass logic and dump data.
 app.get('/tasks/:id', (req, res) => {
     const taskId = req.params.id;
     console.log(`Searching for task with ID: ${taskId}`);
 
-    // Snyk Code will flag this line as a SQL Injection vulnerability
     const query = `SELECT * FROM tasks WHERE id = ${taskId}`;
 
     db.get(query, (err, row) => {
@@ -65,7 +59,6 @@ app.get('/tasks/:id', (req, res) => {
     });
 });
 
-// --- END: SQL INJECTION VULNERABILITY ---
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}`);

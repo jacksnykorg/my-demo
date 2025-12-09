@@ -4,3 +4,72 @@ Jinja2==2.8
 spacy==3.7.2
 textblob==0.18.0.post0
 MarkupSafe==2.0.1
+
+# Intentionally vulnerable packages with known CVEs for SAST demonstration
+# DO NOT USE IN PRODUCTION - These are for security testing only
+
+# Old requests version with multiple CVEs (CVE-2023-32681, CVE-2023-45803)
+requests==2.25.1
+
+# Old urllib3 version with vulnerabilities (CVE-2023-45803, CVE-2024-35195)
+urllib3==1.26.5
+
+# Old cryptography version with known vulnerabilities
+cryptography==3.4.8
+
+# Old PyYAML version with code execution vulnerability (CVE-2020-14343)
+PyYAML==5.3.1
+
+# Old Pillow version with buffer overflow vulnerabilities
+Pillow==8.0.0
+
+# Old Werkzeug version with security issues
+Werkzeug==2.0.0
+
+# Old Flask version with known vulnerabilities
+Flask==2.0.0
+
+# Old Django version with multiple CVEs
+Django==3.1.0
+
+# Old SQLAlchemy version with potential SQL injection issues
+SQLAlchemy==1.3.20
+
+# Old lxml version with XML vulnerabilities
+lxml==4.6.3
+
+# Old paramiko version with security issues
+paramiko==2.7.2
+
+# Old boto3 version with potential AWS credential exposure
+boto3==1.17.0
+
+# Old httpx version with vulnerabilities
+httpx==0.18.0
+
+# Old aiohttp version with security issues
+aiohttp==3.7.4
+
+# Old celery version with known vulnerabilities
+celery==5.0.5
+
+# Old redis version with security issues
+redis==3.5.3
+
+# Old psycopg2 version with SQL injection potential
+psycopg2-binary==2.8.6
+
+# Old pymongo version with security issues
+pymongo==3.11.4
+
+# Old numpy version with buffer overflow vulnerabilities
+numpy==1.19.5
+
+# Old pandas version with security issues
+pandas==1.2.0
+
+# Old setuptools version with known vulnerabilities
+setuptools==57.0.0
+
+# Old pip version (though this won't be installed via pip)
+# pip==20.2.4

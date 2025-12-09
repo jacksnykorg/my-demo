@@ -4,10 +4,13 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from enum import Enum
 from typing import List
+import backend
+
+
 
 # --- API Metadata ---
 app = FastAPI(
-    title="🔥 NLP-Powered Risk Assessment Service",
+    title="NLP-Powered Risk Assessment Service",
     description="An advanced API that uses Natural Language Processing to determine task importance.",
     version="3.1.0", # Version bump!
 )
