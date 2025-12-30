@@ -10,7 +10,7 @@
     "axios": "^1.5.1",
     "chalk": "^5.3.0",
     "cors": "^2.8.5",
-    "express": "4.16.0",
+    "express": "4.22.0",
     "ffmpeg-static": "^5.2.0",
     "node-serialize": "0.0.4",
     "sqlite3": "^5.0.2",
